@@ -15,6 +15,7 @@ A professional research agent that combines web search capabilities with journal
 - **🎨 Modern UI**: Beautiful, responsive interface with dark mode
 - **📤 Export Options**: Export reports as HTML, Markdown, or PDF
 - **💾 Report History**: Save and retrieve past research reports
+- **⚖️ Report Comparison**: Compare multiple reports side-by-side with statistics
 
 ## 🚀 Quick Start
 

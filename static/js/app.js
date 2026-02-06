@@ -27,6 +27,13 @@ class ResearchAgent {
         document.getElementById('export-html')?.addEventListener('click', () => this.exportReport('html'));
         document.getElementById('export-markdown')?.addEventListener('click', () => this.exportReport('markdown'));
         document.getElementById('export-pdf')?.addEventListener('click', () => this.exportReport('pdf'));
+
+        // Comparison modal
+        document.getElementById('compare-btn')?.addEventListener('click', () => this.openComparisonModal());
+        document.getElementById('modal-close')?.addEventListener('click', () => this.closeComparisonModal());
+        document.getElementById('modal-overlay')?.addEventListener('click', () => this.closeComparisonModal());
+        document.getElementById('start-comparison')?.addEventListener('click', () => this.compareReports());
+        document.getElementById('back-to-selector')?.addEventListener('click', () => this.backToSelector());
     }
 
     async startResearch() {
@@ -304,8 +311,157 @@ class ResearchAgent {
 
         setTimeout(() => {
             notification.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => notification.remove(), 300);
+            setTimeout(() =\u003e notification.remove(), 300);
         }, 3000);
+    }
+
+    // Comparison functionality
+    openComparisonModal() {
+        if (this.reports.length < 2) {
+            this.showError('Need at least 2 reports to compare');
+            return;
+        }
+
+        const modal = document.getElementById('comparison-modal');
+        modal.classList.add('active');
+
+        // Populate checkboxes
+        this.renderComparisonCheckboxes();
+    }
+
+    closeComparisonModal() {
+        const modal = document.getElementById('comparison-modal');
+        modal.classList.remove('active');
+
+        // Reset view
+        document.getElementById('comparison-selector').style.display = 'block';
+        document.getElementById('comparison-view').style.display = 'none';
+    }
+
+    renderComparisonCheckboxes() {
+        const container = document.getElementById('report-checkboxes');
+        container.innerHTML = this.reports.map(report => `
+            <label class="report-checkbox-item">
+                <input type="checkbox" value="${report.id}" onchange="agent.updateComparisonSelection()">
+                <div class="report-checkbox-label">
+                    <strong>${report.title}</strong>
+                    <small>${report.word_count} words • ${new Date(report.created_at).toLocaleDateString()}</small>
+                </div>
+            </label>
+        `).join('');
+    }
+
+    updateComparisonSelection() {
+        const checkboxes = document.querySelectorAll('#report-checkboxes input[type="checkbox"]:checked');
+        const button = document.getElementById('start-comparison');
+
+        // Update button state
+        button.disabled = checkboxes.length < 2 || checkboxes.length > 4;
+
+        // Update visual feedback
+        document.querySelectorAll('.report-checkbox-item').forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            if (checkbox.checked) {
+                item.classList.add('selected');
+            } else {
+                item.classList.remove('selected');
+            }
+        });
+    }
+
+    async compareReports() {
+        const checkboxes = document.querySelectorAll('#report-checkboxes input[type="checkbox"]:checked');
+        const reportIds = Array.from(checkboxes).map(cb => parseInt(cb.value));
+
+        try {
+            const response = await fetch('/api/compare', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ report_ids: reportIds })
+            });
+
+            if (!response.ok) {
+                throw new Error('Comparison failed');
+            }
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.displayComparison(data.comparison);
+            } else {
+                throw new Error(data.error || 'Comparison failed');
+            }
+
+        } catch (error) {
+            console.error('Comparison error:', error);
+            this.showError(error.message);
+        }
+    }
+
+    displayComparison(comparison) {
+        // Hide selector, show comparison view
+        document.getElementById('comparison-selector').style.display = 'none';
+        document.getElementById('comparison-view').style.display = 'block';
+
+        // Display stats
+        const statsContainer = document.getElementById('comparison-stats');
+        statsContainer.innerHTML = `
+            <div class="stat-card">
+                <span class="stat-value">${comparison.count}</span>
+                <span class="stat-label">Reports</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">${comparison.total_words}</span>
+                <span class="stat-label">Total Words</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">${comparison.total_sources}</span>
+                <span class="stat-label">Total Sources</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">${comparison.avg_word_count}</span>
+                <span class="stat-label">Avg Words/Report</span>
+            </div>
+        `;
+
+        // Display reports side-by-side
+        const gridContainer = document.getElementById('comparison-grid');
+        gridContainer.innerHTML = comparison.reports.map(report => `
+            <div class="comparison-card">
+                <div class="comparison-card-header">
+                    <h3>${report.title}</h3>
+                    <div class="comparison-card-meta">
+                        <span>📝 ${report.word_count} words</span>
+                        <span>📚 ${report.sources.length} sources</span>
+                    </div>
+                </div>
+                
+                <div class="comparison-card-summary">
+                    ${report.summary}
+                </div>
+                
+                <div class="comparison-card-content">
+                    ${this.formatContent(report.content)}
+                </div>
+                
+                <div class="comparison-card-sources">
+                    <h4>Sources (${report.sources.length})</h4>
+                    <ul>
+                        ${report.sources.slice(0, 3).map(s => `
+                            <li>${s.title}</li>
+                        `).join('')}
+                        ${report.sources.length > 3 ? `<li>... and ${report.sources.length - 3} more</li>` : ''}
+                    </ul>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    backToSelector() {
+        document.getElementById('comparison-selector').style.display = 'block';
+        document.getElementById('comparison-view').style.display = 'none';
     }
 }
 

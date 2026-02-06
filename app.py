@@ -93,6 +93,48 @@ def get_report(report_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/compare', methods=['POST'])
+def compare_reports():
+    """
+    Compare multiple reports
+    POST body: { "report_ids": [1, 2, 3] }
+    """
+    try:
+        data = request.get_json()
+        report_ids = data.get('report_ids', [])
+        
+        if not report_ids or len(report_ids) < 2:
+            return jsonify({'error': 'At least 2 report IDs required'}), 400
+        
+        if len(report_ids) > 4:
+            return jsonify({'error': 'Maximum 4 reports can be compared'}), 400
+        
+        # Fetch all reports
+        reports = []
+        for report_id in report_ids:
+            report = db.get_report(report_id)
+            if report:
+                reports.append(report)
+        
+        if len(reports) < 2:
+            return jsonify({'error': 'Not enough valid reports found'}), 404
+        
+        # Generate comparison data
+        comparison = {
+            'reports': reports,
+            'count': len(reports),
+            'topics': [r['topic'] for r in reports],
+            'total_words': sum(r['word_count'] for r in reports),
+            'total_sources': sum(len(r.get('sources', [])) for r in reports),
+            'avg_word_count': sum(r['word_count'] for r in reports) // len(reports)
+        }
+        
+        return jsonify({'success': True, 'comparison': comparison})
+        
+    except Exception as e:
+        print(f"❌ Comparison error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/reports/<int:report_id>', methods=['DELETE'])
 def delete_report(report_id):
     """Delete a report"""

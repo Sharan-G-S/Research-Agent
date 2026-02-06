@@ -15,6 +15,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/comparison.css') }}">
 </head>
 
 <body>
@@ -29,6 +30,9 @@
                 </div>
             </div>
             <div class="header-actions">
+                <button class="btn btn-icon" id="compare-btn" title="Compare Reports">
+                    <span>⚖️</span>
+                </button>
                 <button class="btn btn-icon" id="theme-toggle" title="Toggle Dark Mode">
                     <span>🌙</span>
                 </button>
@@ -140,6 +144,39 @@
                 </div>
             </article>
         </main>
+    </div>
+
+    <!-- Comparison Modal -->
+    <div class="modal" id="comparison-modal">
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Compare Research Reports</h2>
+                <button class="btn btn-icon modal-close" id="modal-close">
+                    <span>✕</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <div class="comparison-selector" id="comparison-selector">
+                    <h3>Select Reports to Compare (2-4)</h3>
+                    <div id="report-checkboxes" class="report-checkboxes"></div>
+                    <button class="btn btn-primary" id="start-comparison" disabled>
+                        <span>⚖️</span>
+                        Compare Selected Reports
+                    </button>
+                </div>
+
+                <div class="comparison-view" id="comparison-view" style="display: none;">
+                    <button class="btn btn-secondary" id="back-to-selector">
+                        <span>←</span>
+                        Back to Selection
+                    </button>
+                    <div class="comparison-stats" id="comparison-stats"></div>
+                    <div class="comparison-grid" id="comparison-grid"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- JavaScript -->
