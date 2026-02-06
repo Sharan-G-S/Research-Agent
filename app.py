@@ -179,8 +179,17 @@ def export_report(report_id, format):
             
             return send_file(filepath, as_attachment=True, download_name=f"{filename}.html")
         
+        elif format == 'pdf':
+            from pdf_exporter import PDFExporter
+            
+            filepath = os.path.join(export_dir, f"{filename}.pdf")
+            pdf_exporter = PDFExporter()
+            pdf_exporter.generate_pdf(report, filepath)
+            
+            return send_file(filepath, as_attachment=True, download_name=f"{filename}.pdf")
+        
         else:
-            return jsonify({'error': 'Unsupported format. Use: html, markdown'}), 400
+            return jsonify({'error': 'Unsupported format. Use: html, markdown, pdf'}), 400
         
     except Exception as e:
         print(f"❌ Export error: {str(e)}")

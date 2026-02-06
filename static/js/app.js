@@ -26,6 +26,7 @@ class ResearchAgent {
         // Export buttons
         document.getElementById('export-html')?.addEventListener('click', () => this.exportReport('html'));
         document.getElementById('export-markdown')?.addEventListener('click', () => this.exportReport('markdown'));
+        document.getElementById('export-pdf')?.addEventListener('click', () => this.exportReport('pdf'));
     }
 
     async startResearch() {

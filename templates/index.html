@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Research Agent - NYT-Style Investigative Reports</title>
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
     <!-- Styles -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
     <div class="app-container">
         <!-- Header -->
@@ -52,15 +56,12 @@
                 <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
                     Enter any topic to perform deep investigative research and generate a professional NYT-style report.
                 </p>
-                
+
                 <form id="research-form" class="research-form">
                     <div class="input-group">
-                        <input 
-                            type="text" 
-                            id="topic-input" 
+                        <input type="text" id="topic-input"
                             placeholder="e.g., Climate Change Impact on Agriculture, AI in Healthcare, Renewable Energy Trends..."
-                            required
-                        >
+                            required>
                     </div>
                     <button type="submit" class="btn btn-primary" id="submit-btn">
                         <span>🔍</span>
@@ -73,7 +74,7 @@
             <div class="progress-container" id="progress-container">
                 <h3>Research in Progress</h3>
                 <p style="color: var(--text-secondary);">Gathering information and writing your report...</p>
-                
+
                 <div class="progress-steps">
                     <div class="progress-step" id="step-search">
                         <div class="progress-icon">🔍</div>
@@ -132,6 +133,10 @@
                         <span>📝</span>
                         Export as Markdown
                     </button>
+                    <button class="btn btn-secondary" id="export-pdf">
+                        <span>📕</span>
+                        Export as PDF
+                    </button>
                 </div>
             </article>
         </main>
@@ -140,4 +145,5 @@
     <!-- JavaScript -->
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
+
 </html>

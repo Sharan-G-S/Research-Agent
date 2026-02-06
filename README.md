@@ -13,7 +13,7 @@ A professional research agent that combines web search capabilities with journal
 - **✍️ NYT-Style Writing**: Professional journalistic article generation
 - **📊 Source Analysis**: Automatic credibility scoring and ranking
 - **🎨 Modern UI**: Beautiful, responsive interface with dark mode
-- **📤 Export Options**: Export reports as HTML or Markdown
+- **📤 Export Options**: Export reports as HTML, Markdown, or PDF
 - **💾 Report History**: Save and retrieve past research reports
 
 ## 🚀 Quick Start
