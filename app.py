@@ -11,6 +11,7 @@ import os
 import markdown
 from datetime import datetime
 from keyword_extractor import KeywordExtractor
+from analytics import Analytics
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -21,6 +22,7 @@ research_engine = ResearchEngine()
 journalist = Journalist()
 db = Database()
 keyword_extractor = KeywordExtractor()
+analytics = Analytics()
 
 @app.route('/')
 def index():
@@ -169,6 +171,40 @@ def get_keywords(report_id):
     except Exception as e:
         print(f"❌ Keyword extraction error: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/analytics', methods=['GET'])
+def get_analytics():
+    """
+    Get comprehensive analytics for all reports
+    Returns statistics, word cloud, trends, topics, and top sources
+    """
+    try:
+        reports = db.get_all_reports()
+        
+        if not reports:
+            return jsonify({
+                'success': True,
+                'analytics': {
+                    'statistics': analytics.get_overall_statistics([]),
+                    'word_cloud': [],
+                    'trends': {'reports_over_time': [], 'word_count_trend': [], 'sources_trend': []},
+                    'topics': [],
+                    'top_sources': []
+                }
+            })
+        
+        # Get comprehensive analytics
+        analytics_data = analytics.get_comprehensive_analytics(reports)
+        
+        return jsonify({
+            'success': True,
+            'analytics': analytics_data
+        })
+        
+    except Exception as e:
+        print(f"❌ Analytics error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 
 
 @app.route('/api/reports/<int:report_id>', methods=['DELETE'])

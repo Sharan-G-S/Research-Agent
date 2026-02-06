@@ -17,6 +17,7 @@ A professional research agent that combines web search capabilities with journal
 - **💾 Report History**: Save and retrieve past research reports
 - **⚖️ Report Comparison**: Compare multiple reports side-by-side with statistics
 - **🔦 Keyword Highlighting**: Automatically highlight key terms, entities, and technical concepts
+- **📊 Analytics Dashboard**: Visual insights with word clouds, trends, and statistics
 
 ## 🚀 Quick Start
 

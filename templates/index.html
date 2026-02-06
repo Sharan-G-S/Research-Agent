@@ -33,6 +33,9 @@
                 <button class="btn btn-icon" id="compare-btn" title="Compare Reports">
                     <span>⚖️</span>
                 </button>
+                <button class="btn btn-icon" id="dashboard-btn" title="Analytics Dashboard">
+                    <span>📊</span>
+                </button>
                 <button class="btn btn-icon" id="theme-toggle" title="Toggle Dark Mode">
                     <span>🌙</span>
                 </button>
@@ -181,6 +184,67 @@
                     </button>
                     <div class="comparison-stats" id="comparison-stats"></div>
                     <div class="comparison-grid" id="comparison-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Modal -->
+    <div id="dashboard-modal" class="modal">
+        <div class="modal-overlay" id="dashboard-overlay"></div>
+        <div class="modal-content dashboard-content">
+            <div class="modal-header">
+                <h2>📊 Analytics Dashboard</h2>
+                <button class="modal-close" id="dashboard-close">×</button>
+            </div>
+
+            <div class="modal-body dashboard-body">
+                <!-- Statistics Cards -->
+                <div class="stats-grid" id="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-value" id="stat-total-reports">0</div>
+                        <div class="stat-label">Total Reports</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-value" id="stat-total-words">0</div>
+                        <div class="stat-label">Total Words</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-value" id="stat-total-sources">0</div>
+                        <div class="stat-label">Total Sources</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📏</div>
+                        <div class="stat-value" id="stat-avg-words">0</div>
+                        <div class="stat-label">Avg Words/Report</div>
+                    </div>
+                </div>
+
+                <!-- Word Cloud -->
+                <div class="dashboard-section">
+                    <h3>🔤 Word Cloud</h3>
+                    <div class="word-cloud" id="word-cloud"></div>
+                </div>
+
+                <!-- Topic Distribution -->
+                <div class="dashboard-section">
+                    <h3>📋 Top Topics</h3>
+                    <div class="topic-list" id="topic-list"></div>
+                </div>
+
+                <!-- Top Sources -->
+                <div class="dashboard-section">
+                    <h3>🌐 Top Sources</h3>
+                    <div class="sources-list" id="sources-list"></div>
+                </div>
+
+                <!-- Research Trends -->
+                <div class="dashboard-section">
+                    <h3>📈 Research Activity</h3>
+                    <div class="trends-chart" id="trends-chart"></div>
                 </div>
             </div>
         </div>

@@ -39,6 +39,11 @@ class ResearchAgent {
 
         // Keyword highlighting
         document.getElementById('toggle-highlights')?.addEventListener('click', () => this.toggleHighlights());
+
+        // Dashboard
+        document.getElementById('dashboard-btn')?.addEventListener('click', () => this.openDashboard());
+        document.getElementById('dashboard-close')?.addEventListener('click', () => this.closeDashboard());
+        document.getElementById('dashboard-overlay')?.addEventListener('click', () => this.closeDashboard());
     }
 
     async startResearch() {
@@ -570,6 +575,137 @@ class ResearchAgent {
 
     escapeRegex(string) {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    // Dashboard functionality
+    async openDashboard() {
+        const modal = document.getElementById('dashboard-modal');
+        modal.classList.add('active');
+
+        try {
+            // Fetch analytics data
+            const response = await fetch('/api/analytics');
+            const data = await response.json();
+
+            if (data.success) {
+                this.renderDashboard(data.analytics);
+            } else {
+                throw new Error('Failed to load analytics');
+            }
+        } catch (error) {
+            console.error('Dashboard error:', error);
+            this.showError('Failed to load dashboard');
+        }
+    }
+
+    closeDashboard() {
+        const modal = document.getElementById('dashboard-modal');
+        modal.classList.remove('active');
+    }
+
+    renderDashboard(analytics) {
+        // Render statistics
+        this.renderStatistics(analytics.statistics);
+
+        // Render word cloud
+        this.renderWordCloud(analytics.word_cloud);
+
+        // Render topics
+        this.renderTopics(analytics.topics);
+
+        // Render top sources
+        this.renderTopSources(analytics.top_sources);
+
+        // Render trends
+        this.renderTrends(analytics.trends);
+    }
+
+    renderStatistics(stats) {
+        document.getElementById('stat-total-reports').textContent = stats.total_reports.toLocaleString();
+        document.getElementById('stat-total-words').textContent = stats.total_words.toLocaleString();
+        document.getElementById('stat-total-sources').textContent = stats.total_sources.toLocaleString();
+        document.getElementById('stat-avg-words').textContent = stats.avg_word_count.toLocaleString();
+    }
+
+    renderWordCloud(words) {
+        const container = document.getElementById('word-cloud');
+
+        if (!words || words.length === 0) {
+            container.innerHTML = '<div class="dashboard-empty"><div class="dashboard-empty-icon">☁️</div><p>No word cloud data available</p></div>';
+            return;
+        }
+
+        container.innerHTML = words.map(item => {
+            // Calculate font size based on normalized size (10-40px range)
+            const fontSize = Math.max(10, Math.min(40, 10 + (item.size / 100) * 30));
+            return `<span class="word-cloud-item" style="font-size: ${fontSize}px" title="${item.count} occurrences">${item.word}</span>`;
+        }).join('');
+    }
+
+    renderTopics(topics) {
+        const container = document.getElementById('topic-list');
+
+        if (!topics || topics.length === 0) {
+            container.innerHTML = '<div class="dashboard-empty"><p>No topics available</p></div>';
+            return;
+        }
+
+        container.innerHTML = topics.map(topic => `
+            <div class="topic-item">
+                <div class="topic-name">${topic.topic}</div>
+                <div class="topic-count">${topic.count}</div>
+                <div style="flex: 0 0 100px;">
+                    <div class="topic-bar" style="width: ${topic.percentage}%"></div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderTopSources(sources) {
+        const container = document.getElementById('sources-list');
+
+        if (!sources || sources.length === 0) {
+            container.innerHTML = '<div class="dashboard-empty"><p>No sources available</p></div>';
+            return;
+        }
+
+        container.innerHTML = sources.map(source => `
+            <div class="source-item">
+                <div class="source-name">${source.source}</div>
+                <div class="source-count">${source.count} citations</div>
+            </div>
+        `).join('');
+    }
+
+    renderTrends(trends) {
+        const container = document.getElementById('trends-chart');
+
+        if (!trends.reports_over_time || trends.reports_over_time.length === 0) {
+            container.innerHTML = '<div class="dashboard-empty"><p>No trend data available</p></div>';
+            return;
+        }
+
+        // Find max count for scaling
+        const maxCount = Math.max(...trends.reports_over_time.map(t => t.count));
+
+        container.innerHTML = trends.reports_over_time.map(trend => {
+            const percentage = (trend.count / maxCount) * 100;
+            return `
+                <div class="trend-item">
+                    <div class="trend-date">${this.formatDate(trend.date)}</div>
+                    <div class="trend-bar-container">
+                        <div class="trend-bar" style="width: ${percentage}%">
+                            ${trend.count}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    formatDate(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
 }
 
