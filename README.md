@@ -1,4 +1,5 @@
 # 🗞️ Research Agent
+#Sharan G S
 
 A professional research agent that combines web search capabilities with journalistic writing to produce **NYT-style investigative reports**.
 
