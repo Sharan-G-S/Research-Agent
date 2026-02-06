@@ -10,6 +10,7 @@ from config import Config
 import os
 import markdown
 from datetime import datetime
+from keyword_extractor import KeywordExtractor
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -19,6 +20,7 @@ Config.init_app(app)
 research_engine = ResearchEngine()
 journalist = Journalist()
 db = Database()
+keyword_extractor = KeywordExtractor()
 
 @app.route('/')
 def index():
@@ -134,6 +136,40 @@ def compare_reports():
     except Exception as e:
         print(f"❌ Comparison error: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/reports/<int:report_id>/keywords', methods=['GET'])
+def get_keywords(report_id):
+    """
+    Extract and return keywords for a report
+    Returns categorized keywords: keywords, entities, technical terms
+    """
+    try:
+        report = db.get_report(report_id)
+        if not report:
+            return jsonify({'error': 'Report not found'}), 404
+        
+        # Extract keywords from report content
+        content = report.get('content', '')
+        title = report.get('title', '')
+        summary = report.get('summary', '')
+        
+        # Combine title, summary, and content for better keyword extraction
+        full_text = f"{title} {title} {summary} {content}"  # Title weighted more
+        
+        # Extract keywords
+        keywords_data = keyword_extractor.extract_keywords(full_text, top_n=20)
+        
+        return jsonify({
+            'success': True,
+            'keywords': keywords_data['keywords'],
+            'entities': keywords_data['entities'],
+            'technical': keywords_data['technical']
+        })
+        
+    except Exception as e:
+        print(f"❌ Keyword extraction error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/api/reports/<int:report_id>', methods=['DELETE'])
 def delete_report(report_id):

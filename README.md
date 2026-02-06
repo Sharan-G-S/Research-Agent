@@ -16,6 +16,7 @@ A professional research agent that combines web search capabilities with journal
 - **📤 Export Options**: Export reports as HTML, Markdown, or PDF
 - **💾 Report History**: Save and retrieve past research reports
 - **⚖️ Report Comparison**: Compare multiple reports side-by-side with statistics
+- **🔦 Keyword Highlighting**: Automatically highlight key terms, entities, and technical concepts
 
 ## 🚀 Quick Start
 

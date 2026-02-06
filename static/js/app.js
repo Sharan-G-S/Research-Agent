@@ -3,6 +3,8 @@ class ResearchAgent {
     constructor() {
         this.currentReport = null;
         this.reports = [];
+        this.highlightsEnabled = false;
+        this.keywords = null;
         this.init();
     }
 
@@ -34,6 +36,9 @@ class ResearchAgent {
         document.getElementById('modal-overlay')?.addEventListener('click', () => this.closeComparisonModal());
         document.getElementById('start-comparison')?.addEventListener('click', () => this.compareReports());
         document.getElementById('back-to-selector')?.addEventListener('click', () => this.backToSelector());
+
+        // Keyword highlighting
+        document.getElementById('toggle-highlights')?.addEventListener('click', () => this.toggleHighlights());
     }
 
     async startResearch() {
@@ -462,6 +467,109 @@ class ResearchAgent {
     backToSelector() {
         document.getElementById('comparison-selector').style.display = 'block';
         document.getElementById('comparison-view').style.display = 'none';
+    }
+
+    // Keyword Highlighting functionality
+    async toggleHighlights() {
+        if (!this.currentReport) {
+            this.showError('No report to highlight');
+            return;
+        }
+
+        this.highlightsEnabled = !this.highlightsEnabled;
+        const btnText = document.getElementById('highlight-btn-text');
+
+        if (this.highlightsEnabled) {
+            // Fetch keywords if not already loaded
+            if (!this.keywords) {
+                await this.fetchKeywords(this.currentReport.id);
+            }
+
+            // Apply highlights
+            this.applyHighlights();
+            btnText.textContent = 'Disable Highlights';
+        } else {
+            // Remove highlights
+            this.removeHighlights();
+            btnText.textContent = 'Enable Highlights';
+        }
+    }
+
+    async fetchKeywords(reportId) {
+        try {
+            const response = await fetch(`/api/reports/${reportId}/keywords`);
+            const data = await response.json();
+
+            if (data.success) {
+                this.keywords = {
+                    keywords: data.keywords || [],
+                    entities: data.entities || [],
+                    technical: data.technical || []
+                };
+            } else {
+                throw new Error('Failed to fetch keywords');
+            }
+        } catch (error) {
+            console.error('Keyword fetch error:', error);
+            this.showError('Failed to load keywords');
+        }
+    }
+
+    applyHighlights() {
+        if (!this.keywords) return;
+
+        const contentEl = document.getElementById('report-content');
+        const summaryEl = document.getElementById('report-summary');
+
+        // Store original content if not already stored
+        if (!this.originalContent) {
+            this.originalContent = contentEl.innerHTML;
+            this.originalSummary = summaryEl.textContent;
+        }
+
+        // Apply highlights to content
+        let highlightedContent = this.originalContent;
+        let highlightedSummary = this.originalSummary;
+
+        // Highlight entities (proper nouns) - blue
+        this.keywords.entities.forEach(entity => {
+            const regex = new RegExp(`\\b(${this.escapeRegex(entity)})\\b`, 'gi');
+            highlightedContent = highlightedContent.replace(regex, '<span class="entity-highlight">$1</span>');
+            highlightedSummary = highlightedSummary.replace(regex, '<span class="entity-highlight">$1</span>');
+        });
+
+        // Highlight technical terms - pink
+        this.keywords.technical.forEach(term => {
+            const regex = new RegExp(`\\b(${this.escapeRegex(term)})\\b`, 'gi');
+            highlightedContent = highlightedContent.replace(regex, '<span class="technical-highlight">$1</span>');
+            highlightedSummary = highlightedSummary.replace(regex, '<span class="technical-highlight">$1</span>');
+        });
+
+        // Highlight keywords - yellow
+        this.keywords.keywords.forEach(keyword => {
+            const regex = new RegExp(`\\b(${this.escapeRegex(keyword)})\\b`, 'gi');
+            highlightedContent = highlightedContent.replace(regex, '<span class="keyword-highlight">$1</span>');
+            highlightedSummary = highlightedSummary.replace(regex, '<span class="keyword-highlight">$1</span>');
+        });
+
+        // Update DOM
+        contentEl.innerHTML = highlightedContent;
+        summaryEl.innerHTML = highlightedSummary;
+    }
+
+    removeHighlights() {
+        if (!this.originalContent) return;
+
+        const contentEl = document.getElementById('report-content');
+        const summaryEl = document.getElementById('report-summary');
+
+        // Restore original content
+        contentEl.innerHTML = this.originalContent;
+        summaryEl.textContent = this.originalSummary;
+    }
+
+    escapeRegex(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 }
 
