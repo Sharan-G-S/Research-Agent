@@ -1,6 +1,6 @@
 # 🗞️ Research Agent
-#Sharan G S
 
+# Sharan G S
 A professional research agent that combines web search capabilities with journalistic writing to produce **NYT-style investigative reports**.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
