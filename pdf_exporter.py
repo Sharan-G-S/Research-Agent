@@ -43,7 +43,7 @@ class PDFExporter:
         
         # Summary style
         self.styles.add(ParagraphStyle(
-            name='Summary',
+            name='ReportSummary',
             parent=self.styles['Normal'],
             fontSize=11,
             textColor=colors.HexColor('#334155'),
@@ -58,7 +58,7 @@ class PDFExporter:
         
         # Section heading style
         self.styles.add(ParagraphStyle(
-            name='SectionHeading',
+            name='ReportSectionHeading',
             parent=self.styles['Heading2'],
             fontSize=16,
             textColor=colors.HexColor('#0f172a'),
@@ -69,7 +69,7 @@ class PDFExporter:
         
         # Body text style
         self.styles.add(ParagraphStyle(
-            name='BodyText',
+            name='ReportBody',
             parent=self.styles['Normal'],
             fontSize=11,
             textColor=colors.HexColor('#1e293b'),
@@ -81,7 +81,7 @@ class PDFExporter:
         
         # Source style
         self.styles.add(ParagraphStyle(
-            name='Source',
+            name='ReportSource',
             parent=self.styles['Normal'],
             fontSize=9,
             textColor=colors.HexColor('#475569'),
@@ -135,7 +135,7 @@ class PDFExporter:
         # Add summary box
         summary_title = Paragraph("<b>Executive Summary</b>", self.styles['Normal'])
         story.append(summary_title)
-        summary = Paragraph(report['summary'], self.styles['Summary'])
+        summary = Paragraph(report['summary'], self.styles['ReportSummary'])
         story.append(summary)
         story.append(Spacer(1, 0.3*inch))
         
@@ -149,15 +149,15 @@ class PDFExporter:
                 # Check if it's a heading
                 if section.startswith('## '):
                     heading_text = section.replace('## ', '')
-                    story.append(Paragraph(heading_text, self.styles['SectionHeading']))
+                    story.append(Paragraph(heading_text, self.styles['ReportSectionHeading']))
                 elif section.startswith('### '):
                     heading_text = section.replace('### ', '')
-                    story.append(Paragraph(f"<b>{heading_text}</b>", self.styles['BodyText']))
+                    story.append(Paragraph(f"<b>{heading_text}</b>", self.styles['ReportBody']))
                 else:
                     # Regular paragraph
                     # Handle bold text
                     formatted_text = section.replace('**', '<b>').replace('**', '</b>')
-                    para = Paragraph(formatted_text, self.styles['BodyText'])
+                    para = Paragraph(formatted_text, self.styles['ReportBody'])
                     story.append(para)
         
         # Add sources section
@@ -165,14 +165,14 @@ class PDFExporter:
             story.append(Spacer(1, 0.3*inch))
             story.append(self._create_line())
             story.append(Spacer(1, 0.2*inch))
-            story.append(Paragraph("Sources & References", self.styles['SectionHeading']))
+            story.append(Paragraph("Sources & References", self.styles['ReportSectionHeading']))
             story.append(Spacer(1, 0.1*inch))
             
             for i, source in enumerate(report['sources'], 1):
                 source_text = f"{i}. <b>{source['title']}</b><br/>"
                 source_text += f"   <i>{source.get('source', 'Unknown')}</i><br/>"
                 source_text += f"   <link href='{source['url']}'>{source['url']}</link>"
-                story.append(Paragraph(source_text, self.styles['Source']))
+                story.append(Paragraph(source_text, self.styles['ReportSource']))
                 story.append(Spacer(1, 0.05*inch))
         
         # Add footer
