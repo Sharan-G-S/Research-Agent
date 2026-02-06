@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Agent - NYT-Style Investigative Reports</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">🗞️</div>
+                <div class="logo-text">
+                    <h1>Research Agent</h1>
+                    <p>NYT-Style Investigative Reports</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-icon" id="theme-toggle" title="Toggle Dark Mode">
+                    <span>🌙</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Recent Reports</h3>
+                <ul class="report-list" id="reports-list">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📄</div>
+                        <p>No reports yet.<br>Start your first research!</p>
+                    </div>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Research Section -->
+            <section class="research-section">
+                <h2>Start New Research</h2>
+                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+                    Enter any topic to perform deep investigative research and generate a professional NYT-style report.
+                </p>
+                
+                <form id="research-form" class="research-form">
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            id="topic-input" 
+                            placeholder="e.g., Climate Change Impact on Agriculture, AI in Healthcare, Renewable Energy Trends..."
+                            required
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="submit-btn">
+                        <span>🔍</span>
+                        Start Research
+                    </button>
+                </form>
+            </section>
+
+            <!-- Progress Indicator -->
+            <div class="progress-container" id="progress-container">
+                <h3>Research in Progress</h3>
+                <p style="color: var(--text-secondary);">Gathering information and writing your report...</p>
+                
+                <div class="progress-steps">
+                    <div class="progress-step" id="step-search">
+                        <div class="progress-icon">🔍</div>
+                        <div class="progress-label">Searching</div>
+                    </div>
+                    <div class="progress-step" id="step-extract">
+                        <div class="progress-icon">📊</div>
+                        <div class="progress-label">Extracting</div>
+                    </div>
+                    <div class="progress-step" id="step-analyze">
+                        <div class="progress-icon">🧠</div>
+                        <div class="progress-label">Analyzing</div>
+                    </div>
+                    <div class="progress-step" id="step-write">
+                        <div class="progress-icon">✍️</div>
+                        <div class="progress-label">Writing</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Display -->
+            <article class="report-display" id="report-display">
+                <div class="report-header">
+                    <h1 class="report-title" id="report-title"></h1>
+                    <div class="report-meta">
+                        <div class="report-meta-item">
+                            <span>📝</span>
+                            <span id="report-word-count">0</span> words
+                        </div>
+                        <div class="report-meta-item">
+                            <span>📚</span>
+                            <span id="report-source-count">0</span> sources
+                        </div>
+                        <div class="report-meta-item">
+                            <span>📅</span>
+                            <span id="report-date"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="report-summary" id="report-summary"></div>
+
+                <div class="report-content" id="report-content"></div>
+
+                <div class="report-sources">
+                    <h3>Sources & References</h3>
+                    <ul class="sources-list" id="sources-list"></ul>
+                </div>
+
+                <div class="export-actions">
+                    <button class="btn btn-secondary" id="export-html">
+                        <span>📄</span>
+                        Export as HTML
+                    </button>
+                    <button class="btn btn-secondary" id="export-markdown">
+                        <span>📝</span>
+                        Export as Markdown
+                    </button>
+                </div>
+            </article>
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
