@@ -180,4 +180,4 @@ For questions or feedback, please open an issue on GitHub.
 
 ---
 
-**Made with ❤️ for deep research and quality journalism**
+**Made with 💚 from Sharan G S
