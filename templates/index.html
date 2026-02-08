@@ -48,6 +48,14 @@
             <aside class="sidebar">
                 <div class="sidebar-section">
                     <h3>Recent Reports</h3>
+                    <div class="sidebar-filters">
+                        <button class="filter-btn active" data-filter="all">
+                            All Reports
+                        </button>
+                        <button class="filter-btn" data-filter="favorites">
+                            ⭐ Favorites
+                        </button>
+                    </div>
                     <ul class="report-list" id="reports-list">
                         <div class="empty-state">
                             <div class="empty-state-icon">📄</div>
@@ -126,6 +134,9 @@
                     </div>
 
                     <div class="report-actions">
+                        <button class="btn btn-icon bookmark-btn" id="bookmark-btn" title="Bookmark Report">
+                            <span id="bookmark-icon">☆</span>
+                        </button>
                         <button class="btn btn-secondary" id="toggle-highlights">
                             <span>🔦</span>
                             <span id="highlight-btn-text">Enable Highlights</span>

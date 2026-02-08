@@ -219,6 +219,34 @@ def delete_report(report_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/reports/<int:report_id>/favorite', methods=['POST'])
+def toggle_favorite(report_id):
+    """Toggle favorite status of a report"""
+    try:
+        success = db.toggle_favorite(report_id)
+        if success:
+            report = db.get_report(report_id)
+            return jsonify({
+                'success': True,
+                'is_favorite': report.get('is_favorite', 0) == 1
+            })
+        else:
+            return jsonify({'error': 'Report not found'}), 404
+    except Exception as e:
+        print(f"❌ Bookmark error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/reports/favorites', methods=['GET'])
+def get_favorites():
+    """Get all favorite reports"""
+    try:
+        favorites = db.get_favorite_reports()
+        return jsonify({'success': True, 'reports': favorites})
+    except Exception as e:
+        print(f"❌ Favorites error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/api/search', methods=['GET'])
 def search_reports():
     """Search reports by topic or title"""

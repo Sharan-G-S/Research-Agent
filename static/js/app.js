@@ -5,6 +5,7 @@ class ResearchAgent {
         this.reports = [];
         this.highlightsEnabled = false;
         this.keywords = null;
+        this.currentFilter = 'all';
         this.init();
     }
 
@@ -44,6 +45,17 @@ class ResearchAgent {
         document.getElementById('dashboard-btn')?.addEventListener('click', () => this.openDashboard());
         document.getElementById('dashboard-close')?.addEventListener('click', () => this.closeDashboard());
         document.getElementById('dashboard-overlay')?.addEventListener('click', () => this.closeDashboard());
+
+        // Bookmarking
+        document.getElementById('bookmark-btn')?.addEventListener('click', () => this.toggleBookmark());
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const filter = e.target.dataset.filter;
+                this.filterReports(filter);
+            });
+        });
     }
 
     async startResearch() {
@@ -181,6 +193,9 @@ class ResearchAgent {
         // Show report display
         document.getElementById('report-display').classList.add('active');
 
+        // Update bookmark UI
+        this.updateBookmarkUI();
+
         // Scroll to report
         document.getElementById('report-display').scrollIntoView({ behavior: 'smooth' });
     }
@@ -210,11 +225,15 @@ class ResearchAgent {
 
     async loadReports() {
         try {
-            const response = await fetch('/api/reports');
+            const endpoint = this.currentFilter === 'favorites'
+                ? '/api/reports/favorites'
+                : '/api/reports';
+
+            const response = await fetch(endpoint);
             const data = await response.json();
 
-            if (data.success) {
-                this.reports = data.reports;
+            if (data.success || data.reports) {
+                this.reports = data.reports || [];
                 this.renderReportsList();
             }
         } catch (error) {
@@ -226,19 +245,25 @@ class ResearchAgent {
         const listEl = document.getElementById('reports-list');
 
         if (this.reports.length === 0) {
-            listEl.innerHTML = '<div class="empty-state">No reports yet</div>';
+            const emptyMessage = this.currentFilter === 'favorites'
+                ? 'No favorite reports yet'
+                : 'No reports yet';
+            listEl.innerHTML = `<div class="empty-state">${emptyMessage}</div>`;
             return;
         }
 
-        listEl.innerHTML = this.reports.map(report => `
-            <li class="report-item" onclick="agent.loadReport(${report.id})">
-                <div class="report-item-title">${report.title}</div>
-                <div class="report-item-meta">
-                    <span>${report.word_count} words</span>
-                    <span>${new Date(report.created_at).toLocaleDateString()}</span>
-                </div>
-            </li>
-        `).join('');
+        listEl.innerHTML = this.reports.map(report => {
+            const favoriteClass = report.is_favorite ? 'favorite' : '';
+            return `
+                <li class="report-item ${favoriteClass}" onclick="agent.loadReport(${report.id})">
+                    <div class="report-item-title">${report.title}</div>
+                    <div class="report-item-meta">
+                        <span>${report.word_count} words</span>
+                        <span>${new Date(report.created_at).toLocaleDateString()}</span>
+                    </div>
+                </li>
+            `;
+        }).join('');
     }
 
     async loadReport(reportId) {
@@ -718,6 +743,61 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
         document.body.classList.add('dark-mode');
+    }
+
+    // Bookmarking functionality
+    async toggleBookmark() {
+        if (!this.currentReport) {
+            this.showError('No report to bookmark');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/reports/${this.currentReport.id}/favorite`, {
+                method: 'POST'
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                this.currentReport.is_favorite = data.is_favorite ? 1 : 0;
+                this.updateBookmarkUI();
+                this.loadReports(); // Refresh list to update badges
+            }
+        } catch (error) {
+            console.error('Bookmark error:', error);
+            this.showError('Failed to update bookmark');
+        }
+    }
+
+    updateBookmarkUI() {
+        const icon = document.getElementById('bookmark-icon');
+        const btn = document.getElementById('bookmark-btn');
+
+        if (this.currentReport && this.currentReport.is_favorite) {
+            icon.textContent = '⭐';
+            btn.classList.add('active');
+            btn.title = 'Remove Bookmark';
+        } else {
+            icon.textContent = '☆';
+            btn.classList.remove('active');
+            btn.title = 'Bookmark Report';
+        }
+    }
+
+    filterReports(filter) {
+        this.currentFilter = filter;
+
+        // Update filter button states
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            if (btn.dataset.filter === filter) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // Reload reports with new filter
+        this.loadReports();
     }
 });
 

@@ -35,9 +35,18 @@ class Database:
                 sources TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 word_count INTEGER,
-                status TEXT DEFAULT 'completed'
+                status TEXT DEFAULT 'completed',
+                is_favorite INTEGER DEFAULT 0
             )
         ''')
+        
+        # Add is_favorite column if it doesn't exist (migration)
+        try:
+            cursor.execute('ALTER TABLE reports ADD COLUMN is_favorite INTEGER DEFAULT 0')
+            conn.commit()
+        except sqlite3.OperationalError:
+            # Column already exists
+            pass
         
         # Create sources table
         cursor.execute('''
@@ -106,7 +115,7 @@ class Database:
         cursor = conn.cursor()
         
         cursor.execute('''
-            SELECT id, topic, title, summary, created_at, word_count, status
+            SELECT id, topic, title, summary, created_at, word_count, status, is_favorite
             FROM reports 
             ORDER BY created_at DESC 
             LIMIT ?
@@ -148,3 +157,44 @@ class Database:
         conn.close()
         
         return reports
+    
+    def toggle_favorite(self, report_id: int) -> bool:
+        """Toggle favorite status of a report"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        # Get current status
+        cursor.execute('SELECT is_favorite FROM reports WHERE id = ?', (report_id,))
+        row = cursor.fetchone()
+        
+        if not row:
+            conn.close()
+            return False
+        
+        # Toggle status
+        new_status = 0 if row['is_favorite'] else 1
+        cursor.execute('UPDATE reports SET is_favorite = ? WHERE id = ?', (new_status, report_id))
+        
+        conn.commit()
+        conn.close()
+        
+        return True
+    
+    def get_favorite_reports(self, limit: int = 50) -> List[Dict]:
+        """Get all favorite reports, most recent first"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT id, topic, title, summary, created_at, word_count, status, is_favorite
+            FROM reports 
+            WHERE is_favorite = 1
+            ORDER BY created_at DESC 
+            LIMIT ?
+        ''', (limit,))
+        
+        reports = [dict(row) for row in cursor.fetchall()]
+        conn.close()
+        
+        return reports
+
