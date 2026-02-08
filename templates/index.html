@@ -42,150 +42,155 @@
             </div>
         </header>
 
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-section">
-                <h3>Recent Reports</h3>
-                <ul class="report-list" id="reports-list">
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📄</div>
-                        <p>No reports yet.<br>Start your first research!</p>
-                    </div>
-                </ul>
-            </div>
-        </aside>
+        <!-- Content Container -->
+        <div style="display: flex; flex: 1; overflow: hidden;">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3>Recent Reports</h3>
+                    <ul class="report-list" id="reports-list">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📄</div>
+                            <p>No reports yet.<br>Start your first research!</p>
+                        </div>
+                    </ul>
+                </div>
+            </aside>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Research Section -->
-            <section class="research-section">
-                <h2>Start New Research</h2>
-                <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
-                    Enter any topic to perform deep investigative research and generate a professional NYT-style report.
-                </p>
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Research Section -->
+                <section class="research-section">
+                    <h2>Start New Research</h2>
+                    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+                        Enter any topic to perform deep investigative research and generate a professional NYT-style
+                        report.
+                    </p>
 
-                <form id="research-form" class="research-form">
-                    <div class="input-group">
-                        <input type="text" id="topic-input"
-                            placeholder="e.g., Climate Change Impact on Agriculture, AI in Healthcare, Renewable Energy Trends..."
-                            required>
-                    </div>
-                    <button type="submit" class="btn btn-primary" id="submit-btn">
-                        <span>🔍</span>
-                        Start Research
-                    </button>
-                </form>
-            </section>
+                    <form id="research-form" class="research-form">
+                        <div class="input-group">
+                            <input type="text" id="topic-input"
+                                placeholder="e.g., Climate Change Impact on Agriculture, AI in Healthcare, Renewable Energy Trends..."
+                                required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" id="submit-btn">
+                            <span>🔍</span>
+                            Start Research
+                        </button>
+                    </form>
+                </section>
 
-            <!-- Progress Indicator -->
-            <div class="progress-container" id="progress-container">
-                <h3>Research in Progress</h3>
-                <p style="color: var(--text-secondary);">Gathering information and writing your report...</p>
+                <!-- Progress Indicator -->
+                <div class="progress-container" id="progress-container">
+                    <h3>Research in Progress</h3>
+                    <p style="color: var(--text-secondary);">Gathering information and writing your report...</p>
 
-                <div class="progress-steps">
-                    <div class="progress-step" id="step-search">
-                        <div class="progress-icon">🔍</div>
-                        <div class="progress-label">Searching</div>
-                    </div>
-                    <div class="progress-step" id="step-extract">
-                        <div class="progress-icon">📊</div>
-                        <div class="progress-label">Extracting</div>
-                    </div>
-                    <div class="progress-step" id="step-analyze">
-                        <div class="progress-icon">🧠</div>
-                        <div class="progress-label">Analyzing</div>
-                    </div>
-                    <div class="progress-step" id="step-write">
-                        <div class="progress-icon">✍️</div>
-                        <div class="progress-label">Writing</div>
+                    <div class="progress-steps">
+                        <div class="progress-step" id="step-search">
+                            <div class="progress-icon">🔍</div>
+                            <div class="progress-label">Searching</div>
+                        </div>
+                        <div class="progress-step" id="step-extract">
+                            <div class="progress-icon">📊</div>
+                            <div class="progress-label">Extracting</div>
+                        </div>
+                        <div class="progress-step" id="step-analyze">
+                            <div class="progress-icon">🧠</div>
+                            <div class="progress-label">Analyzing</div>
+                        </div>
+                        <div class="progress-step" id="step-write">
+                            <div class="progress-icon">✍️</div>
+                            <div class="progress-label">Writing</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Report Display -->
-            <article class="report-display" id="report-display">
-                <div class="report-header">
-                    <h1 class="report-title" id="report-title"></h1>
-                    <div class="report-meta">
-                        <div class="report-meta-item">
+                <!-- Report Display -->
+                <article class="report-display" id="report-display">
+                    <div class="report-header">
+                        <h1 class="report-title" id="report-title"></h1>
+                        <div class="report-meta">
+                            <div class="report-meta-item">
+                                <span>📝</span>
+                                <span id="report-word-count">0</span> words
+                            </div>
+                            <div class="report-meta-item">
+                                <span>📚</span>
+                                <span id="report-source-count">0</span> sources
+                            </div>
+                            <div class="report-meta-item">
+                                <span>📅</span>
+                                <span id="report-date"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="report-actions">
+                        <button class="btn btn-secondary" id="toggle-highlights">
+                            <span>🔦</span>
+                            <span id="highlight-btn-text">Enable Highlights</span>
+                        </button>
+                    </div>
+
+                    <div class="report-summary" id="report-summary"></div>
+
+                    <div class="report-content" id="report-content"></div>
+
+                    <div class="report-sources">
+                        <h3>Sources & References</h3>
+                        <ul class="sources-list" id="sources-list"></ul>
+                    </div>
+
+                    <div class="export-actions">
+                        <button class="btn btn-secondary" id="export-html">
+                            <span>📄</span>
+                            Export as HTML
+                        </button>
+                        <button class="btn btn-secondary" id="export-markdown">
                             <span>📝</span>
-                            <span id="report-word-count">0</span> words
-                        </div>
-                        <div class="report-meta-item">
-                            <span>📚</span>
-                            <span id="report-source-count">0</span> sources
-                        </div>
-                        <div class="report-meta-item">
-                            <span>📅</span>
-                            <span id="report-date"></span>
-                        </div>
+                            Export as Markdown
+                        </button>
+                        <button class="btn btn-secondary" id="export-pdf">
+                            <span>📕</span>
+                            Export as PDF
+                        </button>
+                    </div>
+                </article>
+            </main>
+        </div>
+
+        <!-- Comparison Modal -->
+        <div class="modal" id="comparison-modal">
+            <div class="modal-overlay" id="modal-overlay"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>📊 Compare Research Reports</h2>
+                    <button class="btn btn-icon modal-close" id="modal-close">
+                        <span>✕</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="comparison-selector" id="comparison-selector">
+                        <h3>Select Reports to Compare (2-4)</h3>
+                        <div id="report-checkboxes" class="report-checkboxes"></div>
+                        <button class="btn btn-primary" id="start-comparison" disabled>
+                            <span>⚖️</span>
+                            Compare Selected Reports
+                        </button>
+                    </div>
+
+                    <div class="comparison-view" id="comparison-view" style="display: none;">
+                        <button class="btn btn-secondary" id="back-to-selector">
+                            <span>←</span>
+                            Back to Selection
+                        </button>
+                        <div class="comparison-stats" id="comparison-stats"></div>
+                        <div class="comparison-grid" id="comparison-grid"></div>
                     </div>
                 </div>
-
-                <div class="report-actions">
-                    <button class="btn btn-secondary" id="toggle-highlights">
-                        <span>🔦</span>
-                        <span id="highlight-btn-text">Enable Highlights</span>
-                    </button>
-                </div>
-
-                <div class="report-summary" id="report-summary"></div>
-
-                <div class="report-content" id="report-content"></div>
-
-                <div class="report-sources">
-                    <h3>Sources & References</h3>
-                    <ul class="sources-list" id="sources-list"></ul>
-                </div>
-
-                <div class="export-actions">
-                    <button class="btn btn-secondary" id="export-html">
-                        <span>📄</span>
-                        Export as HTML
-                    </button>
-                    <button class="btn btn-secondary" id="export-markdown">
-                        <span>📝</span>
-                        Export as Markdown
-                    </button>
-                    <button class="btn btn-secondary" id="export-pdf">
-                        <span>📕</span>
-                        Export as PDF
-                    </button>
-                </div>
-            </article>
-        </main>
-    </div>
-
-    <!-- Comparison Modal -->
-    <div class="modal" id="comparison-modal">
-        <div class="modal-overlay" id="modal-overlay"></div>
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📊 Compare Research Reports</h2>
-                <button class="btn btn-icon modal-close" id="modal-close">
-                    <span>✕</span>
-                </button>
             </div>
-
-            <div class="modal-body">
-                <div class="comparison-selector" id="comparison-selector">
-                    <h3>Select Reports to Compare (2-4)</h3>
-                    <div id="report-checkboxes" class="report-checkboxes"></div>
-                    <button class="btn btn-primary" id="start-comparison" disabled>
-                        <span>⚖️</span>
-                        Compare Selected Reports
-                    </button>
-                </div>
-
-                <div class="comparison-view" id="comparison-view" style="display: none;">
-                    <button class="btn btn-secondary" id="back-to-selector">
-                        <span>←</span>
-                        Back to Selection
-                    </button>
-                    <div class="comparison-stats" id="comparison-stats"></div>
-                    <div class="comparison-grid" id="comparison-grid"></div>
-                </div>
-            </div>
+            </main>
         </div>
     </div>
 
