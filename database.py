@@ -141,17 +141,17 @@ class Database:
         return deleted
     
     def search_reports(self, query: str) -> List[Dict]:
-        """Search reports by topic or title"""
+        """Search reports by topic, title, summary, or content"""
         conn = self.get_connection()
         cursor = conn.cursor()
         
         search_term = f'%{query}%'
         cursor.execute('''
-            SELECT id, topic, title, summary, created_at, word_count
+            SELECT id, topic, title, summary, created_at, word_count, is_favorite
             FROM reports 
-            WHERE topic LIKE ? OR title LIKE ?
+            WHERE topic LIKE ? OR title LIKE ? OR summary LIKE ? OR content LIKE ?
             ORDER BY created_at DESC
-        ''', (search_term, search_term))
+        ''', (search_term, search_term, search_term, search_term))
         
         reports = [dict(row) for row in cursor.fetchall()]
         conn.close()

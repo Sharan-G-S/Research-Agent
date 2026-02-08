@@ -375,6 +375,97 @@ body.dark-mode .report-item.active {
     font-size: var(--font-size-sm);
 }
 
+/* Search Container */
+.search-container {
+    position: relative;
+    margin-bottom: var(--spacing-lg);
+}
+
+.search-input {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    padding-right: var(--spacing-2xl);
+    font-size: var(--font-size-sm);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: var(--transition);
+    font-family: var(--font-sans);
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-50);
+    background: var(--bg-primary);
+}
+
+body.dark-mode .search-input:focus {
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-clear {
+    position: absolute;
+    right: var(--spacing-sm);
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    font-size: var(--font-size-xl);
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: var(--spacing-xs);
+    line-height: 1;
+    transition: var(--transition);
+}
+
+.search-clear:hover {
+    color: var(--text-primary);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Search Results */
+.search-active .report-list {
+    border-top: 2px solid var(--primary);
+    padding-top: var(--spacing-sm);
+}
+
+.search-results-count {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: var(--primary-50);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-weight: 600;
+}
+
+body.dark-mode .search-results-count {
+    background: rgba(139, 92, 246, 0.2);
+    color: var(--primary-light);
+}
+
+/* Search Highlight */
+.search-highlight {
+    background: linear-gradient(120deg, #fbbf24 0%, #f59e0b 100%);
+    color: #111827;
+    padding: 0 3px;
+    border-radius: 3px;
+    font-weight: 600;
+}
+
+body.dark-mode .search-highlight {
+    background: linear-gradient(120deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+
 
 /* Main Content */
 .main-content {

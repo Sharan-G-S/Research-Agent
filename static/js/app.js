@@ -6,6 +6,8 @@ class ResearchAgent {
         this.highlightsEnabled = false;
         this.keywords = null;
         this.currentFilter = 'all';
+        this.searchQuery = '';
+        this.searchTimeout = null;
         this.init();
     }
 
@@ -55,6 +57,15 @@ class ResearchAgent {
                 const filter = e.target.dataset.filter;
                 this.filterReports(filter);
             });
+        });
+
+        // Search
+        document.getElementById('search-input')?.addEventListener('input', (e) => {
+            this.handleSearch(e.target.value);
+        });
+
+        document.getElementById('search-clear')?.addEventListener('click', () => {
+            this.clearSearch();
         });
     }
 
@@ -797,6 +808,97 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Reload reports with new filter
+        this.loadReports();
+    }
+
+    // Search functionality
+    async handleSearch(query) {
+        this.searchQuery = query.trim();
+
+        // Show/hide clear button
+        const clearBtn = document.getElementById('search-clear');
+        clearBtn.style.display = this.searchQuery ? 'block' : 'none';
+
+        // Debounce search
+        clearTimeout(this.searchTimeout);
+        this.searchTimeout = setTimeout(() => {
+            this.performSearch();
+        }, 300);
+    }
+
+    async performSearch() {
+        if (this.searchQuery.length < 2) {
+            this.loadReports();
+            document.querySelector('.sidebar')?.classList.remove('search-active');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/search?q=${encodeURIComponent(this.searchQuery)}`);
+            const data = await response.json();
+
+            if (data.success) {
+                this.reports = data.reports;
+                this.renderSearchResults();
+            }
+        } catch (error) {
+            console.error('Search error:', error);
+        }
+    }
+
+    renderSearchResults() {
+        const listEl = document.getElementById('reports-list');
+        const sidebar = document.querySelector('.sidebar');
+
+        if (this.reports.length === 0) {
+            listEl.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔍</div>
+                    <p>No reports found for<br>"${this.searchQuery}"</p>
+                </div>
+            `;
+            sidebar.classList.add('search-active');
+            return;
+        }
+
+        // Add search results count
+        const countHtml = `
+            <div class="search-results-count">
+                Found ${this.reports.length} result${this.reports.length !== 1 ? 's' : ''}
+            </div>
+        `;
+
+        const reportsHtml = this.reports.map(report => {
+            const favoriteClass = report.is_favorite ? 'favorite' : '';
+            const highlightedTitle = this.highlightSearchTerm(report.title);
+
+            return `
+                <li class="report-item ${favoriteClass}" onclick="agent.loadReport(${report.id})">
+                    <div class="report-item-title">${highlightedTitle}</div>
+                    <div class="report-item-meta">
+                        <span>${report.word_count} words</span>
+                        <span>${new Date(report.created_at).toLocaleDateString()}</span>
+                    </div>
+                </li>
+            `;
+        }).join('');
+
+        listEl.innerHTML = countHtml + reportsHtml;
+        sidebar.classList.add('search-active');
+    }
+
+    highlightSearchTerm(text) {
+        if (!this.searchQuery) return text;
+
+        const regex = new RegExp(`(${this.escapeRegex(this.searchQuery)})`, 'gi');
+        return text.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+
+    clearSearch() {
+        this.searchQuery = '';
+        document.getElementById('search-input').value = '';
+        document.getElementById('search-clear').style.display = 'none';
+        document.querySelector('.sidebar')?.classList.remove('search-active');
         this.loadReports();
     }
 });
