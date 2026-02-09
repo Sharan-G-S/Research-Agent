@@ -357,7 +357,7 @@ class ResearchAgent {
 
         setTimeout(() => {
             notification.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() =\u003e notification.remove(), 300);
+            setTimeout(() => notification.remove(), 300);
         }, 3000);
     }
 
@@ -743,18 +743,6 @@ class ResearchAgent {
         const date = new Date(dateStr);
         return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     }
-}
-
-// Initialize app
-let agent;
-document.addEventListener('DOMContentLoaded', () => {
-    agent = new ResearchAgent();
-
-    // Load saved theme
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-    }
 
     // Bookmarking functionality
     async toggleBookmark() {
@@ -901,6 +889,19 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.sidebar')?.classList.remove('search-active');
         this.loadReports();
     }
+}
+
+// Initialize app
+let agent;
+document.addEventListener('DOMContentLoaded', () => {
+    agent = new ResearchAgent();
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+    }
+
 });
 
 // Add notification animations
