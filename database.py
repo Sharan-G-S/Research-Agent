@@ -41,12 +41,32 @@ class Database:
         ''')
         
         # Add is_favorite column if it doesn't exist (migration)
-        try:
+        # Check if is_favorite column exists, if not add it
+        cursor.execute("PRAGMA table_info(reports)")
+        columns = [column[1] for column in cursor.fetchall()]
+        if 'is_favorite' not in columns:
+            print("🔄 Adding is_favorite column to reports table...")
             cursor.execute('ALTER TABLE reports ADD COLUMN is_favorite INTEGER DEFAULT 0')
-            conn.commit()
-        except sqlite3.OperationalError:
-            # Column already exists
-            pass
+            print("✅ is_favorite column added")
+        
+        # Create report_versions table for version control
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS report_versions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                report_id INTEGER NOT NULL,
+                version_number INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                content TEXT NOT NULL,
+                summary TEXT,
+                sources TEXT,
+                word_count INTEGER,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                change_description TEXT,
+                FOREIGN KEY (report_id) REFERENCES reports (id) ON DELETE CASCADE,
+                UNIQUE(report_id, version_number)
+            )
+        ''')
+        print("✅ report_versions table ready")
         
         # Create sources table
         cursor.execute('''
@@ -179,6 +199,115 @@ class Database:
         conn.close()
         
         return True
+    
+    # Version Control Methods
+    def save_report_version(self, report_id: int, change_description: str = None) -> Optional[int]:
+        """Save current report state as a new version"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        try:
+            # Get current report
+            report = self.get_report(report_id)
+            if not report:
+                conn.close()
+                return None
+            
+            # Get next version number
+            cursor.execute('SELECT MAX(version_number) FROM report_versions WHERE report_id = ?', (report_id,))
+            max_version = cursor.fetchone()[0] or 0
+            next_version = max_version + 1
+            
+            # Save version
+            cursor.execute('''
+                INSERT INTO report_versions 
+                (report_id, version_number, title, content, summary, sources, word_count, change_description)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (report_id, next_version, report['title'], report['content'], 
+                  report['summary'], report['sources'], report['word_count'], change_description))
+            
+            version_id = cursor.lastrowid
+            conn.commit()
+            print(f"✅ Saved version {next_version} for report {report_id}")
+            
+            return version_id
+        except Exception as e:
+            print(f"❌ Error saving version: {str(e)}")
+            conn.rollback()
+            return None
+        finally:
+            conn.close()
+    
+    def get_report_versions(self, report_id: int) -> List[Dict]:
+        """Get all versions of a report"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            SELECT id, version_number, title, word_count, created_at, change_description
+            FROM report_versions
+            WHERE report_id = ?
+            ORDER BY version_number DESC
+        ''', (report_id,))
+        
+        versions = [dict(row) for row in cursor.fetchall()]
+        conn.close()
+        
+        return versions
+    
+    def get_version_content(self, version_id: int) -> Optional[Dict]:
+        """Get full content of a specific version"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT * FROM report_versions WHERE id = ?', (version_id,))
+        row = cursor.fetchone()
+        
+        if not row:
+            conn.close()
+            return None
+        
+        version = dict(row)
+        version['sources'] = json.loads(version['sources']) if version['sources'] else []
+        
+        conn.close()
+        return version
+    
+    def restore_version(self, report_id: int, version_id: int) -> bool:
+        """Restore a report to a previous version"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        try:
+            # Get version content
+            version = self.get_version_content(version_id)
+            if not version:
+                conn.close()
+                return False
+            
+            # Save current state as version before restoring
+            self.save_report_version(report_id, f"Auto-save before restoring to v{version['version_number']}")
+            
+            # Update report with version content
+            sources_json = json.dumps(version['sources']) if isinstance(version['sources'], list) else version['sources']
+            cursor.execute('''
+                UPDATE reports
+                SET title = ?, content = ?, summary = ?, sources = ?, word_count = ?
+                WHERE id = ?
+            ''', (version['title'], version['content'], version['summary'], 
+                  sources_json, version['word_count'], report_id))
+            
+            conn.commit()
+            print(f"✅ Restored report {report_id} to version {version['version_number']}")
+            
+            return True
+        except Exception as e:
+            print(f"❌ Error restoring version: {str(e)}")
+            conn.rollback()
+            return False
+        finally:
+            conn.close()
+
     
     def get_favorite_reports(self, limit: int = 50) -> List[Dict]:
         """Get all favorite reports, most recent first"""

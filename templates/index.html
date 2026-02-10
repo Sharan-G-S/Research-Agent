@@ -147,9 +147,25 @@
                         <button class="btn btn-icon bookmark-btn" id="bookmark-btn" title="Bookmark Report">
                             <span id="bookmark-icon">☆</span>
                         </button>
-                        <button class="btn btn-secondary" id="toggle-highlights">
-                            <span>🔦</span>
-                            <span id="highlight-btn-text">Enable Highlights</span>
+                        <button class="btn btn-secondary" id="history-btn" title="View History">
+                            <span>📜</span>
+                            History
+                        </button>
+                        <button class="btn btn-secondary" id="highlight-btn" title="Toggle Highlights">
+                            <span>✨</span>
+                            Highlights
+                        </button>
+                        <button class="btn btn-secondary" id="compare-btn" title="Compare Reports">
+                            <span>⚖️</span>
+                            Compare
+                        </button>
+                        <button class="btn btn-secondary" id="export-pdf-btn" title="Export as PDF">
+                            <span>📄</span>
+                            Export PDF
+                        </button>
+                        <button class="btn btn-danger" id="delete-btn" title="Delete Report">
+                            <span>🗑️</span>
+                            Delete
                         </button>
                     </div>
 
@@ -272,6 +288,28 @@
                     <h3>📈 Research Activity</h3>
                     <div class="trends-chart" id="trends-chart"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal-overlay" id="history-overlay"></div>
+    <div class="modal" id="history-modal">
+        <div class="modal-header">
+            <h2>📜 Report History</h2>
+            <button class="modal-close" id="history-close">×</button>
+        </div>
+        <div class="modal-content">
+            <div class="history-timeline" id="history-timeline"></div>
+            <div class="version-viewer" id="version-viewer" style="display: none;">
+                <div class="version-header">
+                    <h3 id="version-title"></h3>
+                    <div class="version-actions">
+                        <button class="btn btn-primary" id="restore-version-btn">Restore This Version</button>
+                        <button class="btn btn-secondary" id="back-to-timeline-btn">← Back to Timeline</button>
+                    </div>
+                </div>
+                <div class="version-content" id="version-content"></div>
             </div>
         </div>
     </div>

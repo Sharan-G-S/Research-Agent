@@ -243,7 +243,60 @@ def get_favorites():
         favorites = db.get_favorite_reports()
         return jsonify({'success': True, 'reports': favorites})
     except Exception as e:
-        print(f"❌ Favorites error: {str(e)}")
+        print(f"❌ Favorites fetch error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+# Version Control Endpoints
+@app.route('/api/reports/<int:report_id>/versions', methods=['GET'])
+def get_versions(report_id):
+    """Get all versions of a report"""
+    try:
+        versions = db.get_report_versions(report_id)
+        return jsonify({'success': True, 'versions': versions})
+    except Exception as e:
+        print(f"❌ Version fetch error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/reports/<int:report_id>/versions', methods=['POST'])
+def save_version(report_id):
+    """Save current report state as a version"""
+    try:
+        data = request.get_json()
+        change_description = data.get('description', 'Manual save')
+        
+        version_id = db.save_report_version(report_id, change_description)
+        if version_id:
+            return jsonify({'success': True, 'version_id': version_id})
+        else:
+            return jsonify({'error': 'Report not found'}), 404
+    except Exception as e:
+        print(f"❌ Version save error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/versions/<int:version_id>', methods=['GET'])
+def get_version_content(version_id):
+    """Get full content of a specific version"""
+    try:
+        version = db.get_version_content(version_id)
+        if version:
+            return jsonify({'success': True, 'version': version})
+        else:
+            return jsonify({'error': 'Version not found'}), 404
+    except Exception as e:
+        print(f"❌ Version content error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/reports/<int:report_id>/restore/<int:version_id>', methods=['POST'])
+def restore_version(report_id, version_id):
+    """Restore report to a previous version"""
+    try:
+        success = db.restore_version(report_id, version_id)
+        if success:
+            return jsonify({'success': True, 'message': 'Version restored'})
+        else:
+            return jsonify({'error': 'Restore failed'}), 400
+    except Exception as e:
+        print(f"❌ Version restore error: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 

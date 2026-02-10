@@ -67,6 +67,13 @@ class ResearchAgent {
         document.getElementById('search-clear')?.addEventListener('click', () => {
             this.clearSearch();
         });
+
+        // History
+        document.getElementById('history-btn')?.addEventListener('click', () => this.openHistory());
+        document.getElementById('history-close')?.addEventListener('click', () => this.closeHistory());
+        document.getElementById('history-overlay')?.addEventListener('click', () => this.closeHistory());
+        document.getElementById('restore-version-btn')?.addEventListener('click', () => this.restoreVersion());
+        document.getElementById('back-to-timeline-btn')?.addEventListener('click', () => this.backToTimeline());
     }
 
     async startResearch() {
@@ -888,6 +895,124 @@ class ResearchAgent {
         document.getElementById('search-clear').style.display = 'none';
         document.querySelector('.sidebar')?.classList.remove('search-active');
         this.loadReports();
+    }
+
+    // History/Version Control Methods
+    async openHistory() {
+        if (!this.currentReport) {
+            this.showError('No report selected');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/reports/${this.currentReport.id}/versions`);
+            const data = await response.json();
+
+            if (data.success) {
+                this.renderHistoryTimeline(data.versions);
+                document.getElementById('history-modal').classList.add('active');
+                document.getElementById('history-overlay').classList.add('active');
+            }
+        } catch (error) {
+            console.error('History error:', error);
+            this.showError('Failed to load history');
+        }
+    }
+
+    closeHistory() {
+        document.getElementById('history-modal').classList.remove('active');
+        document.getElementById('history-overlay').classList.remove('active');
+        document.getElementById('history-timeline').style.display = 'block';
+        document.getElementById('version-viewer').style.display = 'none';
+    }
+
+    renderHistoryTimeline(versions) {
+        const timeline = document.getElementById('history-timeline');
+
+        if (versions.length === 0) {
+            timeline.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📜</div>
+                    <p>No version history yet</p>
+                </div>
+            `;
+            return;
+        }
+
+        timeline.innerHTML = versions.map((version, index) => `
+            <div class="timeline-item ${index === 0 ? 'current' : ''}" 
+                 onclick="agent.viewVersion(${version.id})">
+                <div class="timeline-version">
+                    Version ${version.version_number}
+                    ${index === 0 ? '<span class="badge">Current</span>' : ''}
+                </div>
+                <div class="timeline-date">
+                    ${new Date(version.created_at).toLocaleString()}
+                </div>
+                ${version.change_description ? `
+                    <div class="timeline-description">${version.change_description}</div>
+                ` : ''}
+                <div class="timeline-stats">
+                    <span>📝 ${version.word_count} words</span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async viewVersion(versionId) {
+        try {
+            const response = await fetch(`/api/versions/${versionId}`);
+            const data = await response.json();
+
+            if (data.success) {
+                this.displayVersion(data.version);
+            }
+        } catch (error) {
+            console.error('Version view error:', error);
+            this.showError('Failed to load version');
+        }
+    }
+
+    displayVersion(version) {
+        document.getElementById('history-timeline').style.display = 'none';
+        document.getElementById('version-viewer').style.display = 'block';
+
+        document.getElementById('version-title').textContent =
+            `Version ${version.version_number}: ${version.title}`;
+        document.getElementById('version-content').innerHTML = this.formatContent(version.content);
+
+        // Store current version for restore
+        this.currentVersion = version;
+    }
+
+    async restoreVersion() {
+        if (!this.currentVersion || !this.currentReport) return;
+
+        if (!confirm(`Restore to Version ${this.currentVersion.version_number}? Current version will be saved.`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `/api/reports/${this.currentReport.id}/restore/${this.currentVersion.id}`,
+                { method: 'POST' }
+            );
+            const data = await response.json();
+
+            if (data.success) {
+                this.showSuccess('Version restored successfully');
+                this.closeHistory();
+                this.loadReport(this.currentReport.id);
+            }
+        } catch (error) {
+            console.error('Restore error:', error);
+            this.showError('Failed to restore version');
+        }
+    }
+
+    backToTimeline() {
+        document.getElementById('history-timeline').style.display = 'block';
+        document.getElementById('version-viewer').style.display = 'none';
     }
 }
 
