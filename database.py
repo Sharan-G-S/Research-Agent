@@ -282,7 +282,6 @@ class Database:
             # Get version content
             version = self.get_version_content(version_id)
             if not version:
-                conn.close()
                 return False
             
             # Save current state as version before restoring
