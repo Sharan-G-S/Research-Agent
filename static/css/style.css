@@ -1091,3 +1091,9 @@ body.dark-mode .watermark {
     backdrop-filter: blur(10px) saturate(180%);
     -webkit-backdrop-filter: blur(10px) saturate(180%);
 }
+
+/* Success Button State */
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+}
