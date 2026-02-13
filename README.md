@@ -183,4 +183,4 @@ For questions or feedback, please open an issue on GitHub.
 
 ---
 
-**Made with 💚 from Sharan G S
+# Made with 💚 from Sharan G S
