@@ -10,10 +10,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
 
     <!-- Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/icons.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/comparison.css') }}">
 </head>
@@ -23,21 +24,38 @@
         <!-- Header -->
         <header class="header">
             <div class="logo">
-                <div class="logo-icon">🗞️</div>
+                <div class="logo-icon">
+                    <svg class="icon icon-2xl" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                </div>
                 <div class="logo-text">
                     <h1>Research Agent</h1>
-                    <p>NYT-Style Investigative Reports</p>
+                    <p>Professional Investigative Reports</p>
                 </div>
             </div>
             <div class="header-actions">
                 <button class="btn btn-icon" id="compare-btn" title="Compare Reports">
-                    <span>⚖️</span>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <line x1="12" y1="2" x2="12" y2="22" />
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                    </svg>
                 </button>
                 <button class="btn btn-icon" id="dashboard-btn" title="Analytics Dashboard">
-                    <span>📊</span>
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <line x1="18" y1="20" x2="18" y2="10" />
+                        <line x1="12" y1="20" x2="12" y2="4" />
+                        <line x1="6" y1="20" x2="6" y2="14" />
+                    </svg>
                 </button>
                 <button class="btn btn-icon" id="theme-toggle" title="Toggle Dark Mode">
-                    <span>🌙</span>
+                    <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                    </svg>
                 </button>
             </div>
         </header>
@@ -51,10 +69,13 @@
 
                     <!-- Search Input -->
                     <div class="search-container">
-                        <input type="text" id="search-input" class="search-input" placeholder="🔍 Search reports..."
+                        <input type="text" id="search-input" class="search-input" placeholder="Search reports..."
                             autocomplete="off" />
                         <button class="search-clear" id="search-clear" style="display: none;">
-                            ×
+                            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
                         </button>
                     </div>
 
@@ -63,12 +84,19 @@
                             All Reports
                         </button>
                         <button class="filter-btn" data-filter="favorites">
-                            ⭐ Favorites
+                            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polygon
+                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                            </svg>
+                            Favorites
                         </button>
                     </div>
                     <ul class="report-list" id="reports-list">
                         <div class="empty-state">
-                            <div class="empty-state-icon">📄</div>
+                            <svg class="empty-state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                            </svg>
                             <p>No reports yet.<br>Start your first research!</p>
                         </div>
                     </ul>
@@ -92,7 +120,10 @@
                                 required>
                         </div>
                         <button type="submit" class="btn btn-primary" id="submit-btn">
-                            <span>🔍</span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <circle cx="11" cy="11" r="8" />
+                                <path d="m21 21-4.35-4.35" />
+                            </svg>
                             Start Research
                         </button>
                     </form>
@@ -105,19 +136,40 @@
 
                     <div class="progress-steps">
                         <div class="progress-step" id="step-search">
-                            <div class="progress-icon">🔍</div>
+                            <div class="progress-icon">
+                                <svg class="icon icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="11" cy="11" r="8" />
+                                    <path d="m21 21-4.35-4.35" />
+                                </svg>
+                            </div>
                             <div class="progress-label">Searching</div>
                         </div>
                         <div class="progress-step" id="step-extract">
-                            <div class="progress-icon">📊</div>
+                            <div class="progress-icon">
+                                <svg class="icon icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="7 10 12 15 17 10" />
+                                    <line x1="12" y1="15" x2="12" y2="3" />
+                                </svg>
+                            </div>
                             <div class="progress-label">Extracting</div>
                         </div>
                         <div class="progress-step" id="step-analyze">
-                            <div class="progress-icon">🧠</div>
+                            <div class="progress-icon">
+                                <svg class="icon icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                                </svg>
+                            </div>
                             <div class="progress-label">Analyzing</div>
                         </div>
                         <div class="progress-step" id="step-write">
-                            <div class="progress-icon">✍️</div>
+                            <div class="progress-icon">
+                                <svg class="icon icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                                </svg>
+                            </div>
                             <div class="progress-label">Writing</div>
                         </div>
                     </div>
@@ -129,15 +181,26 @@
                         <h1 class="report-title" id="report-title"></h1>
                         <div class="report-meta">
                             <div class="report-meta-item">
-                                <span>📝</span>
+                                <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                </svg>
                                 <span id="report-word-count">0</span> words
                             </div>
                             <div class="report-meta-item">
-                                <span>📚</span>
+                                <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                </svg>
                                 <span id="report-source-count">0</span> sources
                             </div>
                             <div class="report-meta-item">
-                                <span>📅</span>
+                                <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                    <line x1="16" y1="2" x2="16" y2="6" />
+                                    <line x1="8" y1="2" x2="8" y2="6" />
+                                    <line x1="3" y1="10" x2="21" y2="10" />
+                                </svg>
                                 <span id="report-date"></span>
                             </div>
                         </div>
@@ -145,26 +208,46 @@
 
                     <div class="report-actions">
                         <button class="btn btn-icon bookmark-btn" id="bookmark-btn" title="Bookmark Report">
-                            <span id="bookmark-icon">☆</span>
+                            <svg id="bookmark-icon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polygon
+                                    points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                            </svg>
                         </button>
                         <button class="btn btn-secondary" id="history-btn" title="View History">
-                            <span>📜</span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M3 3v5h5" />
+                                <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8" />
+                            </svg>
                             History
                         </button>
                         <button class="btn btn-secondary" id="highlight-btn" title="Toggle Highlights">
-                            <span>✨</span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path
+                                    d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z" />
+                            </svg>
                             Highlights
                         </button>
                         <button class="btn btn-secondary" id="compare-btn" title="Compare Reports">
-                            <span>⚖️</span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <line x1="12" y1="2" x2="12" y2="22" />
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                            </svg>
                             Compare
                         </button>
                         <button class="btn btn-secondary" id="export-pdf-btn" title="Export as PDF">
-                            <span>📄</span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
                             Export PDF
                         </button>
                         <button class="btn btn-danger" id="delete-btn" title="Delete Report">
-                            <span>🗑️</span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="3 6 5 6 21 6" />
+                                <path
+                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            </svg>
                             Delete
                         </button>
                     </div>
@@ -180,15 +263,26 @@
 
                     <div class="export-actions">
                         <button class="btn btn-secondary" id="export-html">
-                            <span>📄</span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <polyline points="16 18 22 12 16 6" />
+                                <polyline points="8 6 2 12 8 18" />
+                            </svg>
                             Export as HTML
                         </button>
                         <button class="btn btn-secondary" id="export-markdown">
-                            <span>📝</span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                            </svg>
                             Export as Markdown
                         </button>
                         <button class="btn btn-secondary" id="export-pdf">
-                            <span>📕</span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                                <line x1="16" y1="13" x2="8" y2="13" />
+                                <line x1="16" y1="17" x2="8" y2="17" />
+                            </svg>
                             Export as PDF
                         </button>
                     </div>
@@ -201,9 +295,12 @@
             <div class="modal-overlay" id="modal-overlay"></div>
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>📊 Compare Research Reports</h2>
+                    <h2>Compare Research Reports</h2>
                     <button class="btn btn-icon modal-close" id="modal-close">
-                        <span>✕</span>
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
                     </button>
                 </div>
 
@@ -212,14 +309,20 @@
                         <h3>Select Reports to Compare (2-4)</h3>
                         <div id="report-checkboxes" class="report-checkboxes"></div>
                         <button class="btn btn-primary" id="start-comparison" disabled>
-                            <span>⚖️</span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <line x1="12" y1="2" x2="12" y2="22" />
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                            </svg>
                             Compare Selected Reports
                         </button>
                     </div>
 
                     <div class="comparison-view" id="comparison-view" style="display: none;">
                         <button class="btn btn-secondary" id="back-to-selector">
-                            <span>←</span>
+                            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <line x1="19" y1="12" x2="5" y2="12" />
+                                <polyline points="12 19 5 12 12 5" />
+                            </svg>
                             Back to Selection
                         </button>
                         <div class="comparison-stats" id="comparison-stats"></div>
@@ -236,30 +339,58 @@
         <div class="modal-overlay" id="dashboard-overlay"></div>
         <div class="modal-content dashboard-content">
             <div class="modal-header">
-                <h2>📊 Analytics Dashboard</h2>
-                <button class="modal-close" id="dashboard-close">×</button>
+                <h2>Analytics Dashboard</h2>
+                <button class="modal-close" id="dashboard-close">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
             </div>
 
             <div class="modal-body dashboard-body">
                 <!-- Statistics Cards -->
                 <div class="stats-grid" id="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon">📝</div>
+                        <div class="stat-icon">
+                            <svg class="icon icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                <polyline points="14 2 14 8 20 8" />
+                            </svg>
+                        </div>
                         <div class="stat-value" id="stat-total-reports">0</div>
                         <div class="stat-label">Total Reports</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">📊</div>
+                        <div class="stat-icon">
+                            <svg class="icon icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <line x1="18" y1="20" x2="18" y2="10" />
+                                <line x1="12" y1="20" x2="12" y2="4" />
+                                <line x1="6" y1="20" x2="6" y2="14" />
+                            </svg>
+                        </div>
                         <div class="stat-value" id="stat-total-words">0</div>
                         <div class="stat-label">Total Words</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">📚</div>
+                        <div class="stat-icon">
+                            <svg class="icon icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                            </svg>
+                        </div>
                         <div class="stat-value" id="stat-total-sources">0</div>
                         <div class="stat-label">Total Sources</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">📏</div>
+                        <div class="stat-icon">
+                            <svg class="icon icon-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <line x1="21" y1="10" x2="3" y2="10" />
+                                <line x1="21" y1="6" x2="3" y2="6" />
+                                <line x1="21" y1="14" x2="3" y2="14" />
+                                <line x1="21" y1="18" x2="3" y2="18" />
+                            </svg>
+                        </div>
                         <div class="stat-value" id="stat-avg-words">0</div>
                         <div class="stat-label">Avg Words/Report</div>
                     </div>
@@ -267,25 +398,25 @@
 
                 <!-- Word Cloud -->
                 <div class="dashboard-section">
-                    <h3>🔤 Word Cloud</h3>
+                    <h3>Word Cloud</h3>
                     <div class="word-cloud" id="word-cloud"></div>
                 </div>
 
                 <!-- Topic Distribution -->
                 <div class="dashboard-section">
-                    <h3>📋 Top Topics</h3>
+                    <h3>Top Topics</h3>
                     <div class="topic-list" id="topic-list"></div>
                 </div>
 
                 <!-- Top Sources -->
                 <div class="dashboard-section">
-                    <h3>🌐 Top Sources</h3>
+                    <h3>Top Sources</h3>
                     <div class="sources-list" id="sources-list"></div>
                 </div>
 
                 <!-- Research Trends -->
                 <div class="dashboard-section">
-                    <h3>📈 Research Activity</h3>
+                    <h3>Research Activity</h3>
                     <div class="trends-chart" id="trends-chart"></div>
                 </div>
             </div>
@@ -296,8 +427,13 @@
     <div class="modal-overlay" id="history-overlay"></div>
     <div class="modal" id="history-modal">
         <div class="modal-header">
-            <h2>📜 Report History</h2>
-            <button class="modal-close" id="history-close">×</button>
+            <h2>Report History</h2>
+            <button class="modal-close" id="history-close">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
         </div>
         <div class="modal-content">
             <div class="history-timeline" id="history-timeline"></div>
@@ -313,6 +449,9 @@
             </div>
         </div>
     </div>
+
+    <!-- Watermark -->
+    <div class="watermark">ResearchGO</div>
 
     <!-- JavaScript -->
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>

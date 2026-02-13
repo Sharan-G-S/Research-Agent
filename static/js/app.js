@@ -88,7 +88,7 @@ class ResearchAgent {
         // Disable form
         const submitBtn = document.getElementById('submit-btn');
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span>🔍</span> Researching...';
+        submitBtn.innerHTML = '<svg class="icon icon-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Researching...';
 
         // Show progress
         this.showProgress();
@@ -135,7 +135,7 @@ class ResearchAgent {
         } finally {
             // Re-enable form
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<span>🔍</span> Start Research';
+            submitBtn.innerHTML = '<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> Start Research';
         }
     }
 
@@ -486,8 +486,8 @@ class ResearchAgent {
                 <div class="comparison-card-header">
                     <h3>${report.title}</h3>
                     <div class="comparison-card-meta">
-                        <span>📝 ${report.word_count} words</span>
-                        <span>📚 ${report.sources.length} sources</span>
+                        <span><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> ${report.word_count} words</span>
+                        <span><svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> ${report.sources.length} sources</span>
                     </div>
                 </div>
                 
@@ -674,7 +674,7 @@ class ResearchAgent {
         const container = document.getElementById('word-cloud');
 
         if (!words || words.length === 0) {
-            container.innerHTML = '<div class="dashboard-empty"><div class="dashboard-empty-icon">☁️</div><p>No word cloud data available</p></div>';
+            container.innerHTML = '<div class="dashboard-empty"><svg class="dashboard-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg><p>No word cloud data available</p></div>';
             return;
         }
 
@@ -780,11 +780,13 @@ class ResearchAgent {
         const btn = document.getElementById('bookmark-btn');
 
         if (this.currentReport && this.currentReport.is_favorite) {
-            icon.textContent = '⭐';
+            const icon = document.getElementById('bookmark-icon');
+            icon.innerHTML = '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/>';
             btn.classList.add('active');
             btn.title = 'Remove Bookmark';
         } else {
-            icon.textContent = '☆';
+            const icon = document.getElementById('bookmark-icon');
+            icon.innerHTML = '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>';
             btn.classList.remove('active');
             btn.title = 'Bookmark Report';
         }
